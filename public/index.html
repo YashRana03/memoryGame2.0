@@ -1,0 +1,78 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Memory Game</title>
+    <script
+      src="https://kit.fontawesome.com/24d8884cbc.js"
+      crossorigin="anonymous"
+    ></script>
+    <link rel="stylesheet" href="./index.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Indie+Flower&family=Kalam:wght@300&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="container">
+      <h1>Memory Game</h1>
+      <span>
+        <i id="icon" class="fa-solid fa-ranking-star"></i>
+      </span>
+      <h2>Moves: <span id="moves">0</span></h2>
+      <div class="flex" id="grid"></div>
+      <h2 id="result"></h2>
+    </div>
+    <div id="dialogue"></div>
+
+    <section id="start-message">
+      <div class="overlay">
+        <div class="initial-message">
+          <h2>Player's Name:</h3>
+          <form>
+            <div class="flex-input"> 
+            <input type="text" name="plr-name" id="plr-name" />
+            <button type="submit" class="name-btn">Submit</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <section id="scoreboard">
+      <div class="overlay">
+        <div class="scoreboard">
+          <span class="close-scoreboard">
+            <i class="fas fa-window-close"></i>
+            <!-- <span>close</span> -->
+          </span>
+          <h2>SCOREBOARD</h2>
+          <div class="player-score">
+            <h3>Player</h3>
+            <h3>Best Score</h3>
+          </div>
+          <hr />
+          <div class="score-list"></div>
+          <div class="player-score list-item">
+            <p>Name1</p>
+            <p>10</p>
+          </div>
+          <hr />
+          <div class="player-score list-item">
+            <p>Name2</p>
+            <p>8</p>
+          </div>
+          <hr />
+          <div class="player-score list-item">
+            <p>Name3</p>
+            <p>5</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script src="./index.js"></script>
+  </body>
+</html>
