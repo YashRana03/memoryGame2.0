@@ -69,6 +69,7 @@ const blank = "./images/back.gif";
 const girdEl = document.getElementById("grid");
 const movesEl = document.getElementById("moves");
 let allCardEl;
+let playerName = "";
 
 // Accessing scoreboard elements
 const scoreBoardBtnEl = document.getElementById("icon");
@@ -89,49 +90,112 @@ closeScoreBoardEl.addEventListener("click", (e) => {
   scoreBoardEl.style.visibility = "hidden";
 });
 
+const createPlrWindow = document.getElementsByClassName("createPlayer")[0];
+//const createPlrWindowBtn = document.getElementsByClassName("createPlrBtn")[0];
+const nameFormEl1 = document.getElementById("name-input1");
+const createPlrWindowAnchor = document.getElementById("anchor");
+
+const choosePlrWindow = document.getElementsByClassName("choosePlayer")[0];
+//const choosePlrWindowBtn = document.getElementsByClassName("choosePlrBtn")[0];
+const nameFormEl2 = document.getElementById("name-input2");
+
+//---------------------------------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------------------------
+
+// adding an event listener to the submit button which will close the window if the player is successfully added to the database
+nameFormEl1.addEventListener("submit", (e) => {
+  e.preventDefault();
+  addPlayer();
+});
+
+createPlrWindowAnchor.addEventListener("click", (e) => {
+  createPlrWindow.style.visibility = "hidden";
+  choosePlrWindow.style.visibility = "visible";
+});
+
+nameFormEl2.addEventListener("submit", (e) => {
+  e.preventDefault();
+  logPlayer();
+});
+
 // This function makes visible the message window that asks the player's name
-const initialDialogue = document.getElementsByClassName("initial-message")[0];
-const initialDialogueBtn = document.getElementsByClassName("name-btn")[0];
 function createInitialMessage() {
   // making window visible
-  initialDialogue.style.visibility = "visible";
+  createPlrWindow.style.visibility = "visible";
   overlayEl.style.visibility = "visible";
-
-  // adding an event listener to the submit button which will close the window if the player is successfully added to the database
-  initialDialogueBtn.addEventListener("click", (e) => {
-    e.preventDefault();
-    addPlayer();
-  });
 }
 
-// Adds the new player to the user if that player name does not already exist
+// Adds the new player to the database if that player name does not already exist
 async function addPlayer() {
-  const nameFormEl = document.getElementById("name-input");
-  const errorEl = document.getElementsByClassName("error")[0];
+  const nameFormEl1 = document.getElementById("name-input1");
+  const errorEl = document.getElementById("error1");
   errorEl.textContent = "";
 
   // post request to /addPlayer with player's name and a default score value of 100
-  const res = await fetch(nameFormEl.action, {
+  const res = await fetch(nameFormEl1.action, {
     method: "post",
     headers: {
       "content-type": "application/json",
     },
     body: JSON.stringify({
-      name: nameFormEl.plrName.value,
-      score: 10,
+      name: nameFormEl1.createPlrName.value,
+      score: 100,
+      password: nameFormEl1.createPlrPassword.value,
     }),
   });
 
   const status = await res.json();
-  // If the player name is already exists, a message error is displayed on the message window
+  // If the player name already exists, a message error is displayed on the message window
   if (status.code == 11000) {
-    errorEl.textContent =
-      "That player already exists. Please try a different name";
-    // Otherwise the window is removed
-  } else {
-    overlayEl.style.visibility = "hidden";
-    initialDialogue.style.visibility = "hidden";
+    errorEl.textContent = status.message;
   }
+  // Otherwise the window is removed
+  else {
+    overlayEl.style.visibility = "hidden";
+    createPlrWindow.style.visibility = "hidden";
+    playerName = nameFormEl1.createPlrName.value;
+  }
+}
+
+async function logPlayer() {
+  const nameFormEl2 = document.getElementById("name-input2");
+  console.log(nameFormEl2);
+  const errorEl = document.getElementById("error2");
+  errorEl.textContent = "";
+
+  const res = await fetch(nameFormEl2.action, {
+    method: "post",
+    headers: {
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({
+      name: nameFormEl2.choosePlrName.value,
+      password: nameFormEl2.choosePlrPassword.value,
+    }),
+  });
+
+  const status = await res.json();
+  console.log(status);
+  // check if the status is a match or not and display appropriate message accordingly
+  if (status.message == "no match") {
+    errorEl.textContent = "Credentials do not match";
+  } else if (status.message == "match") {
+    // hiding the message window
+    choosePlrWindow.style.visibility = "hidden";
+    overlayEl.style.visibility = "hidden";
+    playerName = nameFormEl2.choosePlrName.value;
+  } else {
+    // if the player name does not exist
+    errorEl.textContent = status.message;
+  }
+}
+
+function compareScore() {
+  const newScore = movesEl.textContent;
+  console.log(newScore);
 }
 
 // This creates the inital grid of cards
@@ -184,6 +248,7 @@ function checkMatch() {
 
   // if there have been 6 matches, meaning the are no more cards the game ends by creating a dialogue
   if (cardMatches == 6) {
+    compareScore();
     createDialogue();
   }
 

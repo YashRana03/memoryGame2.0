@@ -94,8 +94,8 @@ img {
   top: 50%;
   left: 50%;
   width: 300px;
-  height: 200px;
-  margin-top: -100px;
+  height: 300px;
+  margin-top: -150px;
   margin-left: -150px;
   background-color: ghostwhite;
   text-align: center;
@@ -121,6 +121,7 @@ img {
   width: 250px;
   border-radius: 15px;
   border: 2px solid skyblue;
+  margin: 5px;
 }
 
 .initial-message button {
@@ -144,8 +145,24 @@ img {
   font-size: 13px;
   font-style: italic;
   color: red;
-  margin-top: -10px;
+  /* margin-top: -10px; */
   font-family: Arial, Helvetica, sans-serif;
+}
+
+.initial-message a {
+  cursor: pointer;
+  color: grey;
+  font-family: Arial, Helvetica, sans-serif;
+  font-style: italic;
+  font-size: 12px;
+}
+
+.initial-message a:hover {
+  color: black;
+}
+
+.choosePlayer {
+  visibility: hidden;
 }
 /* --------------------------------------------------------------------------------------------- */
 .overlay {

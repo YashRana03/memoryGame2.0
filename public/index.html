@@ -28,14 +28,36 @@
     <div id="dialogue"></div>
 
     <section id="start-message">
+
+      <!-- Create player window -->
       <div class="overlay">
-        <div class="initial-message">
-          <h2>Player's Name:</h3>
-          <form action="/addPlayer" method="post" id="name-input">
+        <div class="initial-message createPlayer">
+          <h2>Create Player</h3>
+          <form action="/addPlayer" method="post" id="name-input1">
+            <div class="flex-input">  
+            <div class="error" id="error1"></div> 
+
+            <input  type="text" required name="createPlrName" id="createPlrName1" placeholder="player name"  />
+            <input type="password" name="createPlrPassword" id="createPlrPassword" placeholder="password" required minlength="6"/>
+            <button type="submit" class="createPlrBtn">Submit</button>
+            <a id="anchor">Already have a player? Click here to use it!</a>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- choose player window -->
+
+      <div class="overlay">
+        <div class="initial-message choosePlayer ">
+          <h2>Choose Player</h3>
+          <form action="/matchPlayer" method="post" id="name-input2">
             <div class="flex-input"> 
-            <div class="error"></div>
-            <input type="text" name="plrName" id="plrName" />
-            <button type="submit" class="name-btn">Submit</button>
+            
+            <input type="text" name="choosePlrName" id="choosePlrName" placeholder="Player Name" required/>
+            <input type="password" name="choosePlrPassword" id="choosePlrPassword" placeholder="password" required minlength="6"/> 
+            <div class="error" id="error2"></div>
+            <button type="submit" class="choosePlrBtn">Submit</button>
             </div>
           </form>
         </div>

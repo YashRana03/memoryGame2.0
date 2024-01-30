@@ -1,7 +1,8 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const dontenv = require("dotenv");
-const Score = require("./scoreModel");
+const Score = require("./PlayerModel");
+const Player = require("./PlayerModel");
 
 const app = express();
 
@@ -17,7 +18,7 @@ dontenv.config({ path: "./config.env" });
 
 const DB = process.env.DATABASE.replace("<password>", process.env.DB_PASSWORD);
 
-//Connection to database
+// Connection to database
 mongoose
   .connect(DB, {
     useNewUrlParser: true,
@@ -35,12 +36,12 @@ app.post("/addPlayer", (req, res, next) => {
   Score.create({
     name: req.body.name,
     score: req.body.score,
+    password: req.body.password,
   })
     .then(() => {
       res.status(200).send({ status: "success" });
     })
     .catch((error) => {
-      // console.log(error.code);
       if (error.code == 11000) {
         res.status(400).send({
           status: "Failure",
@@ -54,6 +55,33 @@ app.post("/addPlayer", (req, res, next) => {
       }
     });
 });
+
+app.post("/matchPlayer", async (req, res, next) => {
+  const name = req.body.name;
+  const password = req.body.password;
+
+  //1- get the data
+  //2- check if that player exists and if passwords match
+  const player = await Player.findOne({ name: name }).catch((err) => {
+    console.log(err);
+  });
+  console.log(player);
+
+  //3- if so return match, otherwise no match
+  if (!player) {
+    res
+      .status(404)
+      .send({ status: "failure", message: "No player with such name exists" });
+  } else if (player.password == password) {
+    res.status(200).send({ status: "success", message: "match" });
+  } else {
+    res.status(404).send({ status: "failure", message: "no match" });
+  }
+});
+
+app.get("/allPlayers", (req, res, next) => {});
+
+app.patch("/updatePlayer", (req, res, next) => {});
 
 app.all("*", (req, res) => {
   res.end("<h1>404 ERROR: THIS ROUTE DOES NOT EXIST</h1>");

@@ -1,10 +1,14 @@
 const mongoose = require("mongoose");
 
-const scoreSchema = mongoose.Schema({
+const playerSchema = mongoose.Schema({
   name: {
     type: String,
     unique: true,
     required: [true, "Player name must be provided"],
+  },
+  password: {
+    type: String,
+    required: true,
   },
   score: {
     type: Number,
@@ -12,6 +16,6 @@ const scoreSchema = mongoose.Schema({
   },
 });
 
-const Score = mongoose.model("Score", scoreSchema);
+const Player = mongoose.model("Player", playerSchema);
 
-module.exports = Score;
+module.exports = Player;
