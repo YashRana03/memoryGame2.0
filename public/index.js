@@ -70,40 +70,65 @@ const girdEl = document.getElementById("grid");
 const movesEl = document.getElementById("moves");
 let allCardEl;
 
+// Accessing scoreboard elements
 const scoreBoardBtnEl = document.getElementById("icon");
 const scoreBoardEl = document.getElementsByClassName("scoreboard")[0];
 const overlayEl = document.getElementsByClassName("overlay")[0];
 const closeScoreBoardEl =
   document.getElementsByClassName("close-scoreboard")[0];
 
+// Adding event listener to scoreboard icon to open scoreboard
 scoreBoardBtnEl.addEventListener("click", (e) => {
   overlayEl.style.visibility = "visible";
   scoreBoardEl.style.visibility = "visible";
 });
 
+// Adding event listener to scoreboard cross icon to close scoreboard
 closeScoreBoardEl.addEventListener("click", (e) => {
   overlayEl.style.visibility = "hidden";
   scoreBoardEl.style.visibility = "hidden";
 });
 
+// This function creates the message window thats asks the player's name
 function createInitialMessage() {
   const initialDialogue = document.getElementsByClassName("initial-message")[0];
   const initialDialogueBtn = document.getElementsByClassName("name-btn")[0];
 
+  // sets the message window visible when the page is first loaded
+
   initialDialogue.style.visibility = "visible";
   overlayEl.style.visibility = "visible";
 
+  // adding an event listener to the submit button which will close the window
   initialDialogueBtn.addEventListener("click", (e) => {
     e.preventDefault();
+    something();
     overlayEl.style.visibility = "hidden";
     initialDialogue.style.visibility = "hidden";
   });
 }
 
+async function something() {
+  const nameFormEl = document.getElementById("name-input");
+
+  const res = await fetch(nameFormEl.action, {
+    method: "post",
+    headers: {
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({
+      name: nameFormEl.plrName.value,
+      score: 10,
+    }),
+  });
+
+  const status = await res.json();
+  console.log(status);
+}
+
 // This creates the inital grid of cards
 function createGrid() {
   girdEl.innerHTML = "";
-  console.log(girdEl);
   let count = 0;
   allCardEl = [];
   moves = 0;
@@ -224,5 +249,7 @@ function createDialogue() {
   dialogueWindowEl.appendChild(dialogueButton2El);
 }
 
+// Create the card grid
 createGrid();
+// Load the message window asking the player's name
 createInitialMessage();
