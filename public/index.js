@@ -89,28 +89,28 @@ closeScoreBoardEl.addEventListener("click", (e) => {
   scoreBoardEl.style.visibility = "hidden";
 });
 
-// This function creates the message window thats asks the player's name
+// This function makes visible the message window that asks the player's name
+const initialDialogue = document.getElementsByClassName("initial-message")[0];
+const initialDialogueBtn = document.getElementsByClassName("name-btn")[0];
 function createInitialMessage() {
-  const initialDialogue = document.getElementsByClassName("initial-message")[0];
-  const initialDialogueBtn = document.getElementsByClassName("name-btn")[0];
-
-  // sets the message window visible when the page is first loaded
-
+  // making window visible
   initialDialogue.style.visibility = "visible";
   overlayEl.style.visibility = "visible";
 
-  // adding an event listener to the submit button which will close the window
+  // adding an event listener to the submit button which will close the window if the player is successfully added to the database
   initialDialogueBtn.addEventListener("click", (e) => {
     e.preventDefault();
-    something();
-    overlayEl.style.visibility = "hidden";
-    initialDialogue.style.visibility = "hidden";
+    addPlayer();
   });
 }
 
-async function something() {
+// Adds the new player to the user if that player name does not already exist
+async function addPlayer() {
   const nameFormEl = document.getElementById("name-input");
+  const errorEl = document.getElementsByClassName("error")[0];
+  errorEl.textContent = "";
 
+  // post request to /addPlayer with player's name and a default score value of 100
   const res = await fetch(nameFormEl.action, {
     method: "post",
     headers: {
@@ -123,7 +123,15 @@ async function something() {
   });
 
   const status = await res.json();
-  console.log(status);
+  // If the player name is already exists, a message error is displayed on the message window
+  if (status.code == 11000) {
+    errorEl.textContent =
+      "That player already exists. Please try a different name";
+    // Otherwise the window is removed
+  } else {
+    overlayEl.style.visibility = "hidden";
+    initialDialogue.style.visibility = "hidden";
+  }
 }
 
 // This creates the inital grid of cards

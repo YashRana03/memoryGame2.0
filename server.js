@@ -17,6 +17,7 @@ dontenv.config({ path: "./config.env" });
 
 const DB = process.env.DATABASE.replace("<password>", process.env.DB_PASSWORD);
 
+//Connection to database
 mongoose
   .connect(DB, {
     useNewUrlParser: true,
@@ -28,25 +29,30 @@ mongoose
     console.log("Connection successfull");
   });
 
-app.post("/addScore", (req, res, next) => {
+// This route adds a player and a default score to the database
+// Returns an error message if player already exists
+app.post("/addPlayer", (req, res, next) => {
   Score.create({
     name: req.body.name,
     score: req.body.score,
-  }).catch((error) => {
-    // console.log(error.code);
-    if (error.code == 11000) {
-      res.status(400).send({
-        status: "Failure",
-        message: "That player already exists. Please try a different name",
-      });
-    } else {
-      res
-        .status(500)
-        .send({ status: "Failure", messsage: "Unexpted databse error" });
-    }
-  });
-
-  res.status(200).send({ status: "success" });
+  })
+    .then(() => {
+      res.status(200).send({ status: "success" });
+    })
+    .catch((error) => {
+      // console.log(error.code);
+      if (error.code == 11000) {
+        res.status(400).send({
+          status: "Failure",
+          message: "That player already exists. Please try a different name",
+          code: 11000,
+        });
+      } else {
+        res
+          .status(500)
+          .send({ status: "Failure", messsage: "Unexpted databse error" });
+      }
+    });
 });
 
 app.all("*", (req, res) => {

@@ -94,8 +94,8 @@ img {
   top: 50%;
   left: 50%;
   width: 300px;
-  height: 180px;
-  margin-top: -90px;
+  height: 200px;
+  margin-top: -100px;
   margin-left: -150px;
   background-color: ghostwhite;
   text-align: center;
@@ -140,6 +140,13 @@ img {
   cursor: pointer;
 }
 
+.error {
+  font-size: 13px;
+  font-style: italic;
+  color: red;
+  margin-top: -10px;
+  font-family: Arial, Helvetica, sans-serif;
+}
 /* --------------------------------------------------------------------------------------------- */
 .overlay {
   position: fixed;
