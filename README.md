@@ -1,0 +1,1 @@
+This is memoryGame2.0 with the same game functionality as the first version but also includes a scoreboard which displays the best scores of different players. This project uses MongoDB as a database and nodeJS to implement the server. For the front-end HTML, CSS and vanilla JS are used.
