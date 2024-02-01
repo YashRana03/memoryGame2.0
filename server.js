@@ -62,10 +62,11 @@ app.post("/matchPlayer", async (req, res, next) => {
 
   //1- get the data
   //2- check if that player exists and if passwords match
-  const player = await Player.findOne({ name: name }).catch((err) => {
-    console.log(err);
-  });
-  console.log(player);
+  const player = await Player.findOne({ name: name })
+    .select("+password")
+    .catch((err) => {
+      console.log(err);
+    });
 
   //3- if so return match, otherwise no match
   if (!player) {
@@ -79,9 +80,30 @@ app.post("/matchPlayer", async (req, res, next) => {
   }
 });
 
-app.get("/allPlayers", (req, res, next) => {});
+// Route updates the player score if the new score is lower than their previous score
+app.patch("/updateScore", async (req, res, next) => {
+  console.log(111111);
+  const newScore = req.body.newScore;
+  const player = await Player.findOneAndUpdate(
+    {
+      name: req.body.name,
+      score: { $gt: newScore },
+    },
+    { score: newScore }
+  ).catch((err) => {
+    console.log(err);
+  });
 
-app.patch("/updatePlayer", (req, res, next) => {});
+  res.status(200).send({ status: "success" });
+});
+
+app.get("/allPlayers", async (req, res, next) => {
+  const players = await Player.find({});
+
+  res.status(200).json({ data: players });
+
+  console.log(players);
+});
 
 app.all("*", (req, res) => {
   res.end("<h1>404 ERROR: THIS ROUTE DOES NOT EXIST</h1>");

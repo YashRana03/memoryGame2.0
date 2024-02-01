@@ -9,6 +9,7 @@ const playerSchema = mongoose.Schema({
   password: {
     type: String,
     required: true,
+    select: false,
   },
   score: {
     type: Number,

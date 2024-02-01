@@ -160,13 +160,14 @@ async function addPlayer() {
   }
 }
 
+// Logs the player if right password is provided
 async function logPlayer() {
   const nameFormEl2 = document.getElementById("name-input2");
   console.log(nameFormEl2);
   const errorEl = document.getElementById("error2");
   errorEl.textContent = "";
 
-  const res = await fetch(nameFormEl2.action, {
+  const res = await fetch("/matchPlayer", {
     method: "post",
     headers: {
       "content-type": "application/json",
@@ -193,9 +194,57 @@ async function logPlayer() {
   }
 }
 
-function compareScore() {
+// This function sends a request to the server asking to update the score of the current user (if it is better)
+async function updateScore() {
   const newScore = movesEl.textContent;
-  console.log(newScore);
+  // Patch requst sent with player's name and current score
+  const res = await fetch("/updateScore", {
+    method: "PATCH",
+    headers: {
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({
+      name: playerName,
+      newScore: newScore,
+    }),
+  }).catch((err) => {
+    console.log(err);
+  });
+
+  const status = await res.json();
+  console.log(status);
+}
+
+// Helper function that creates and returns a list-element for the scoreboard
+function createListEl(name, score) {
+  const listItemEl = document.createElement("div");
+  listItemEl.setAttribute("class", "player-score list-item");
+  const p1El = document.createElement("p");
+  const p2El = document.createElement("p");
+
+  p1El.textContent = name;
+  p2El.textContent = score;
+  listItemEl.append(p1El, p2El);
+
+  return listItemEl;
+}
+
+// Updates the scoreboard by reqeusting from the database all the player sccores
+async function updateScoreBoard() {
+  const scoreListEl = document.getElementsByClassName("score-list")[0];
+
+  const res = await fetch("/allPlayers");
+  const status = await res.json();
+  const playersArray = status.data;
+
+  let listEl = "";
+
+  scoreListEl.innerHTML = "";
+  for (let i = 0; i < playersArray.length; i++) {
+    let hrEl = document.createElement("hr");
+    listEl = createListEl(playersArray[i].name, playersArray[i].score);
+    scoreListEl.append(listEl, hrEl);
+  }
 }
 
 // This creates the inital grid of cards
@@ -248,7 +297,8 @@ function checkMatch() {
 
   // if there have been 6 matches, meaning the are no more cards the game ends by creating a dialogue
   if (cardMatches == 6) {
-    compareScore();
+    updateScore();
+    updateScoreBoard();
     createDialogue();
   }
 
@@ -326,3 +376,4 @@ function createDialogue() {
 createGrid();
 // Load the message window asking the player's name
 createInitialMessage();
+updateScoreBoard();
