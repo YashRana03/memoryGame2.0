@@ -97,12 +97,11 @@ app.patch("/updateScore", async (req, res, next) => {
   res.status(200).send({ status: "success" });
 });
 
+// sends back all the plaeyers in the database
 app.get("/allPlayers", async (req, res, next) => {
-  const players = await Player.find({});
+  const players = await Player.find({}).sort({ score: 1 });
 
   res.status(200).json({ data: players });
-
-  console.log(players);
 });
 
 app.all("*", (req, res) => {
