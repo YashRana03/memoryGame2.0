@@ -56,24 +56,23 @@ app.post("/addPlayer", (req, res, next) => {
     });
 });
 
+// Logs in the player
 app.post("/matchPlayer", async (req, res, next) => {
   const name = req.body.name;
   const password = req.body.password;
 
-  //1- get the data
-  //2- check if that player exists and if passwords match
   const player = await Player.findOne({ name: name })
     .select("+password")
     .catch((err) => {
       console.log(err);
     });
 
-  //3- if so return match, otherwise no match
+  // check if that player exists and if passwords match
   if (!player) {
     res
       .status(404)
       .send({ status: "failure", message: "No player with such name exists" });
-  } else if (player.password == password) {
+  } else if (await player.checkPassword(password, player.password)) {
     res.status(200).send({ status: "success", message: "match" });
   } else {
     res.status(404).send({ status: "failure", message: "no match" });
@@ -82,7 +81,6 @@ app.post("/matchPlayer", async (req, res, next) => {
 
 // Route updates the player score if the new score is lower than their previous score
 app.patch("/updateScore", async (req, res, next) => {
-  console.log(111111);
   const newScore = req.body.newScore;
   const player = await Player.findOneAndUpdate(
     {
