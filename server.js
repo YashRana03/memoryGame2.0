@@ -61,13 +61,14 @@ app.post("/matchPlayer", async (req, res, next) => {
   const name = req.body.name;
   const password = req.body.password;
 
+  // getting player from database using name
   const player = await Player.findOne({ name: name })
-    .select("+password")
+    .select("+password") // explicitly telling mongoose to select the password field
     .catch((err) => {
       console.log(err);
     });
 
-  // check if that player exists and if passwords match
+  // check if that player exists and if passwords match and send appropriate response
   if (!player) {
     res
       .status(404)
@@ -95,13 +96,14 @@ app.patch("/updateScore", async (req, res, next) => {
   res.status(200).send({ status: "success" });
 });
 
-// sends back all the plaeyers in the database
+// sends back all the players in the database
 app.get("/allPlayers", async (req, res, next) => {
   const players = await Player.find({}).sort({ score: 1 });
 
   res.status(200).json({ data: players });
 });
 
+// Catches any unhandled routes
 app.all("*", (req, res) => {
   res.end("<h1>404 ERROR: THIS ROUTE DOES NOT EXIST</h1>");
 });

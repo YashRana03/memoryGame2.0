@@ -181,20 +181,35 @@ img {
   font-family: "Indie Flower", cursive;
 }
 
+::-webkit-scrollbar {
+  width: 0.6vw;
+}
+
+::-webkit-scrollbar-track {
+  background-color: #909090;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #494848;
+  border-radius: 10px;
+}
+
 .scoreboard {
   position: fixed;
   top: 50%;
   left: 50%;
-  margin-top: -250px;
+  margin-top: -150px;
   margin-left: -150px;
   width: 300px;
-  height: 500px;
+  height: 300px;
   background-color: ghostwhite;
   color: black;
   text-align: center;
   border-radius: 10px;
   padding: 20px;
   visibility: hidden;
+  overflow: auto;
 }
 
 .close-scoreboard {

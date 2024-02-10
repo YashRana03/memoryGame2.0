@@ -1,64 +1,20 @@
-let imgArr = [
-  {
-    name: "bird",
-    img: "./images/bird.png",
-  },
+import { imgArr } from "./images.js";
 
-  {
-    name: "cat",
-    img: "./images/cat.png",
-  },
+// Used to make requsts to the server
+class Request {
+  async makeRequest(type, route, body) {
+    const res = await fetch(route, {
+      method: type,
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+    return res;
+  }
+}
 
-  {
-    name: "dog",
-    img: "./images/dog.png",
-  },
-
-  {
-    name: "hamburger",
-    img: "./images/hamburger.png",
-  },
-
-  {
-    name: "cheese",
-    img: "./images/cheese.png",
-  },
-
-  {
-    name: "pizza",
-    img: "./images/pizza.png",
-  },
-
-  {
-    name: "bird",
-    img: "./images/bird.png",
-  },
-
-  {
-    name: "cat",
-    img: "./images/cat.png",
-  },
-
-  {
-    name: "dog",
-    img: "./images/dog.png",
-  },
-
-  {
-    name: "hamburger",
-    img: "./images/hamburger.png",
-  },
-
-  {
-    name: "cheese",
-    img: "./images/cheese.png",
-  },
-
-  {
-    name: "pizza",
-    img: "./images/pizza.png",
-  },
-];
+const requestObj = new Request();
 
 // Variable initialisation
 let cardsPicked = [];
@@ -90,38 +46,32 @@ closeScoreBoardEl.addEventListener("click", (e) => {
   scoreBoardEl.style.visibility = "hidden";
 });
 
+// Accessing initial window elemenents prompting user to create a player
 const createPlrWindow = document.getElementsByClassName("createPlayer")[0];
-//const createPlrWindowBtn = document.getElementsByClassName("createPlrBtn")[0];
 const nameFormEl1 = document.getElementById("name-input1");
 const createPlrWindowAnchor = document.getElementById("anchor");
-
 const choosePlrWindow = document.getElementsByClassName("choosePlayer")[0];
-//const choosePlrWindowBtn = document.getElementsByClassName("choosePlrBtn")[0];
 const nameFormEl2 = document.getElementById("name-input2");
 
-//---------------------------------------------------------------------------------------------------------------------------------
-//---------------------------------------------------------------------------------------------------------------------------------
-//---------------------------------------------------------------------------------------------------------------------------------
-//---------------------------------------------------------------------------------------------------------------------------------
-//---------------------------------------------------------------------------------------------------------------------------------
-
-// adding an event listener to the submit button which will close the window if the player is successfully added to the database
+// Adding an event listener to the submit button which will close the create plr window if the player is successfully added to the database
 nameFormEl1.addEventListener("submit", (e) => {
   e.preventDefault();
   addPlayer();
 });
 
+// Adding event listener so that create player window is switched with the choose player window if user clicks the link
 createPlrWindowAnchor.addEventListener("click", (e) => {
   createPlrWindow.style.visibility = "hidden";
   choosePlrWindow.style.visibility = "visible";
 });
 
+// Adding event listener to the choose plr window so that when form is submitted the user will be logged in if credentials match
 nameFormEl2.addEventListener("submit", (e) => {
   e.preventDefault();
   logPlayer();
 });
 
-// This function makes visible the message window that asks the player's name
+// This function makes visible the create plr message window
 function createInitialMessage() {
   // making window visible
   createPlrWindow.style.visibility = "visible";
@@ -134,17 +84,11 @@ async function addPlayer() {
   const errorEl = document.getElementById("error1");
   errorEl.textContent = "";
 
-  // post request to /addPlayer with player's name and a default score value of 100
-  const res = await fetch(nameFormEl1.action, {
-    method: "post",
-    headers: {
-      "content-type": "application/json",
-    },
-    body: JSON.stringify({
-      name: nameFormEl1.createPlrName.value,
-      score: 100,
-      password: nameFormEl1.createPlrPassword.value,
-    }),
+  // Making the requst through the requestObj
+  const res = await requestObj.makeRequest("post", nameFormEl1.action, {
+    name: nameFormEl1.createPlrName.value,
+    score: 100,
+    password: nameFormEl1.createPlrPassword.value,
   });
 
   const status = await res.json();
@@ -167,19 +111,14 @@ async function logPlayer() {
   const errorEl = document.getElementById("error2");
   errorEl.textContent = "";
 
-  const res = await fetch("/matchPlayer", {
-    method: "post",
-    headers: {
-      "content-type": "application/json",
-    },
-    body: JSON.stringify({
-      name: nameFormEl2.choosePlrName.value,
-      password: nameFormEl2.choosePlrPassword.value,
-    }),
+  // Making the requst through the requestObj
+  const res = await requestObj.makeRequest("post", "/matchPlayer", {
+    name: nameFormEl2.choosePlrName.value,
+    password: nameFormEl2.choosePlrPassword.value,
   });
 
   const status = await res.json();
-  console.log(status);
+
   // check if the status is a match or not and display appropriate message accordingly
   if (status.message == "no match") {
     errorEl.textContent = "Credentials do not match";
@@ -197,36 +136,15 @@ async function logPlayer() {
 // This function sends a request to the server asking to update the score of the current user (if it is better)
 async function updateScore() {
   const newScore = movesEl.textContent;
+
   // Patch requst sent with player's name and current score
-  const res = await fetch("/updateScore", {
-    method: "PATCH",
-    headers: {
-      "content-type": "application/json",
-    },
-    body: JSON.stringify({
-      name: playerName,
-      newScore: newScore,
-    }),
-  }).catch((err) => {
-    console.log(err);
+  const res = await requestObj.makeRequest("PATCH", "/updateScore", {
+    name: playerName,
+    newScore: newScore,
   });
 
   const status = await res.json();
   console.log(status);
-}
-
-// Helper function that creates and returns a list-element for the scoreboard
-function createListEl(name, score) {
-  const listItemEl = document.createElement("div");
-  listItemEl.setAttribute("class", "player-score list-item");
-  const p1El = document.createElement("p");
-  const p2El = document.createElement("p");
-
-  p1El.textContent = name;
-  p2El.textContent = score;
-  listItemEl.append(p1El, p2El);
-
-  return listItemEl;
 }
 
 // Updates the scoreboard by reqeusting from the database all the player sccores
@@ -245,6 +163,20 @@ async function updateScoreBoard() {
     listEl = createListEl(playersArray[i].name, playersArray[i].score);
     scoreListEl.append(listEl, hrEl);
   }
+}
+
+// Helper function that creates and returns a list-element for the scoreboard
+function createListEl(name, score) {
+  const listItemEl = document.createElement("div");
+  listItemEl.setAttribute("class", "player-score list-item");
+  const p1El = document.createElement("p");
+  const p2El = document.createElement("p");
+
+  p1El.textContent = name;
+  p2El.textContent = score;
+  listItemEl.append(p1El, p2El);
+
+  return listItemEl;
 }
 
 // This creates the inital grid of cards
