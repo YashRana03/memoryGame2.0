@@ -88,6 +88,11 @@ img {
 #icon:hover {
   cursor: pointer;
 }
+.cross {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+}
 /* --------------------------------------------------------------------------------------------- */
 .initial-message {
   position: fixed;
@@ -145,7 +150,6 @@ img {
   font-size: 13px;
   font-style: italic;
   color: red;
-  /* margin-top: -10px; */
   font-family: Arial, Helvetica, sans-serif;
 }
 

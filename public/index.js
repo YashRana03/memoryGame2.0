@@ -24,6 +24,7 @@ let moves = 0;
 const blank = "./images/back.gif";
 const girdEl = document.getElementById("grid");
 const movesEl = document.getElementById("moves");
+const nameEl = document.getElementById("name");
 let allCardEl;
 let playerName = "";
 
@@ -49,8 +50,9 @@ closeScoreBoardEl.addEventListener("click", (e) => {
 // Accessing initial window elemenents prompting user to create a player
 const createPlrWindow = document.getElementsByClassName("createPlayer")[0];
 const nameFormEl1 = document.getElementById("name-input1");
-const createPlrWindowAnchor = document.getElementById("anchor");
+const createPlrWindowAnchor1 = document.getElementById("anchor1");
 const choosePlrWindow = document.getElementsByClassName("choosePlayer")[0];
+const createPlrWindowAnchor2 = document.getElementById("anchor2");
 const nameFormEl2 = document.getElementById("name-input2");
 
 // Adding an event listener to the submit button which will close the create plr window if the player is successfully added to the database
@@ -60,9 +62,15 @@ nameFormEl1.addEventListener("submit", (e) => {
 });
 
 // Adding event listener so that create player window is switched with the choose player window if user clicks the link
-createPlrWindowAnchor.addEventListener("click", (e) => {
+createPlrWindowAnchor1.addEventListener("click", (e) => {
   createPlrWindow.style.visibility = "hidden";
   choosePlrWindow.style.visibility = "visible";
+});
+
+// Adding event listener so that choose player window is switched with the create player window if user clicks the link
+createPlrWindowAnchor2.addEventListener("click", (e) => {
+  createPlrWindow.style.visibility = "visible";
+  choosePlrWindow.style.visibility = "hidden";
 });
 
 // Adding event listener to the choose plr window so that when form is submitted the user will be logged in if credentials match
@@ -101,6 +109,7 @@ async function addPlayer() {
     overlayEl.style.visibility = "hidden";
     createPlrWindow.style.visibility = "hidden";
     playerName = nameFormEl1.createPlrName.value;
+    nameEl.textContent = playerName;
   }
 }
 
@@ -127,6 +136,7 @@ async function logPlayer() {
     choosePlrWindow.style.visibility = "hidden";
     overlayEl.style.visibility = "hidden";
     playerName = nameFormEl2.choosePlrName.value;
+    nameEl.textContent = playerName;
   } else {
     // if the player name does not exist
     errorEl.textContent = status.message;
@@ -275,7 +285,6 @@ function createDialogue() {
   const dialogueH3El = document.createElement("h3");
   const dialogueButton1El = document.createElement("button");
   const dialogueButton2El = document.createElement("button");
-  const cross = document.createElement("img");
   dialogueButton1El.addEventListener("click", function () {
     dialogueWindowEl.setAttribute("class", "nothing");
     dialogueWindowEl.innerHTML = "";
@@ -288,12 +297,7 @@ function createDialogue() {
     createGrid();
     createInitialMessage();
   });
-  cross.src = "./images/cross.png";
-  cross.addEventListener("click", function () {
-    dialogueWindowEl.setAttribute("class", "nothing");
-    dialogueWindowEl.innerHTML = "";
-  });
-  dialogueWindowEl.appendChild(cross);
+
   dialogueH2El.textContent = "Gongratulations! You Won!!!";
   dialogueWindowEl.appendChild(dialogueH2El);
   dialogueH3El.textContent = "Start new game?";
