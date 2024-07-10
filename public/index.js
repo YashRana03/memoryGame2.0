@@ -27,6 +27,7 @@ const movesEl = document.getElementById("moves");
 const nameEl = document.getElementById("name");
 let allCardEl;
 let playerName = "";
+let timerId;
 
 // Accessing scoreboard elements
 const scoreBoardBtnEl = document.getElementById("icon");
@@ -212,6 +213,11 @@ function createGrid() {
   });
 }
 
+// Clears the timeout
+function cancelTimer() {
+  clearTimeout(timerId);
+}
+
 // This checks whether the two cards chosen by the player are a match
 function checkMatch() {
   allCardEl = document.querySelectorAll("#grid img");
@@ -247,10 +253,11 @@ function checkMatch() {
   // The two variables are reinitialised
   cardsPicked = [];
   cardsPickedId = [];
-  // Each card that has not been matched has its event listener readded
+  // Each card that has not been matched has checkMatch event listener removed
   for (let card of allCardEl) {
     if (card.getAttribute("class") == "y") {
-      card.addEventListener("click", flipCard);
+      card.addEventListener("click", flipCard); // this has to be added in order to allow the last two cards to be picked again
+      card.removeEventListener("click", checkMatch);
     }
   }
 }
@@ -265,15 +272,27 @@ function flipCard() {
   cardsPicked.push(imgArr[cardId].name);
 
   allCardEl = document.querySelectorAll("#grid img");
-  if (cardsPicked.length == 2) {
+
+  if (cardsPicked.length == 1) {
+    this.removeEventListener("click", flipCard); // makes sure that the current card cannot be clicked again
+  } else if (cardsPicked.length == 2) {
     moves++;
     movesEl.textContent = moves;
-    //Removes any event listeners from each card so that no more cards can be clicked while
-    // timeout is on
+
+    // Adds checkMatch as first event listener to ensure the cards are checked straight away if the user presses another card and timeout is cancelled using cancelTimer
     for (let card of allCardEl) {
       card.removeEventListener("click", flipCard);
+      card.addEventListener("click", checkMatch);
+      card.addEventListener("click", cancelTimer);
+      card.addEventListener("click", flipCard);
     }
-    setTimeout(checkMatch, 1500);
+
+    // makes sure the current two cards cannot be picked again
+    this.removeEventListener("click", flipCard);
+    allCardEl[cardsPickedId[0]].removeEventListener("click", flipCard);
+
+    // the two picked cards are displayed for 1.5 seconds before being removed (if matched) or flipped over
+    timerId = setTimeout(checkMatch, 1500);
   }
 }
 
